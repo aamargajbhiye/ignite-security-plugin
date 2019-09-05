@@ -4,4 +4,4 @@ This is custom Apache Ignite plugin implemented by following these guidelines ht
 
 Apache Ignite loads plugin through Java service loader, one just need to put this jar in classpath and Apache Ignite will pick it up on startup.
 
-Article for this customization can be found here https://www.bugdbug.com/post/how-to-handle-network-segmentation-in-apache-ignite
+Article for this customization can be found here https://www.bugdbug.com/
