@@ -14,9 +14,12 @@ public class Server1 {
 
     public static void main(String[] args) {
         IgniteConfiguration igniteConfiguration = new IgniteConfiguration();
-        SecurityCredentials securityCredentials = new SecurityCredentials("amar", "amar");
+        SecurityCredentials securityCredentials = new SecurityCredentials("testUser", "testPassword");
         SecurityPluginConfiguration securityPluginConfiguration = new SecurityPluginConfiguration(securityCredentials);
         igniteConfiguration.setPluginConfigurations(securityPluginConfiguration);
+        CustomTcpDiscoverySpi customTcpDiscoverySpi = new CustomTcpDiscoverySpi();
+        customTcpDiscoverySpi.setSecurityCredentials(securityCredentials);
+        igniteConfiguration.setDiscoverySpi(customTcpDiscoverySpi);
         Ignite ignite = Ignition.start(igniteConfiguration);
 
         final IgniteCache<Object, Object> cache = ignite.getOrCreateCache("temp-cache");

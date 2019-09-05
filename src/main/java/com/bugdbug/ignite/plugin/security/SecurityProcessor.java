@@ -8,13 +8,11 @@ import org.apache.ignite.internal.processors.GridProcessorAdapter;
 import org.apache.ignite.internal.processors.security.GridSecurityProcessor;
 import org.apache.ignite.internal.processors.security.SecurityContext;
 import org.apache.ignite.plugin.PluginConfiguration;
-import org.apache.ignite.plugin.security.AuthenticationContext;
-import org.apache.ignite.plugin.security.SecurityCredentials;
 import org.apache.ignite.plugin.security.SecurityException;
-import org.apache.ignite.plugin.security.SecurityPermission;
-import org.apache.ignite.plugin.security.SecuritySubject;
+import org.apache.ignite.plugin.security.*;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.UUID;
 
@@ -42,13 +40,30 @@ public class SecurityProcessor extends GridProcessorAdapter implements GridSecur
         }
     }
 
+    /**
+     * @param node
+     * @param cred
+     * @return
+     * @throws IgniteCheckedException
+     */
     public SecurityContext authenticateNode(ClusterNode node, SecurityCredentials cred) throws IgniteCheckedException {
-        Object password = securityPluginConfiguration.getSecurityCredentials().getPassword();
-        if (password == null ||
-                !password.equals("amar")) {
-            return null;
+
+        SecurityCredentials userSecurityCredentials;
+
+        if (securityPluginConfiguration != null) {
+            if ((userSecurityCredentials = securityPluginConfiguration.getSecurityCredentials()) != null) {
+                return userSecurityCredentials.equals(cred) ? new SecurityContextImpl() : null;
+            }
+            if (cred == null && userSecurityCredentials == null) {
+                return new SecurityContextImpl();
+            }
         }
-        return new SecurityContextImpl();
+
+        if (cred == null)
+            return new SecurityContextImpl();
+
+        return null;
+
     }
 
     public boolean isGlobalNodeAuthentication() {
@@ -61,18 +76,17 @@ public class SecurityProcessor extends GridProcessorAdapter implements GridSecur
     }
 
     public Collection<SecuritySubject> authenticatedSubjects() throws IgniteCheckedException {
-        System.out.println("In authenticatedSubjects");
-        return null;
+
+        return Arrays.asList(new SecuritySubjectImpl());
     }
 
     public SecuritySubject authenticatedSubject(UUID subjId) throws IgniteCheckedException {
 
-        System.out.println("In autheticatedSubject");
-        return null;
+        return new SecuritySubjectImpl();
     }
 
     public void authorize(String name, SecurityPermission perm, @Nullable SecurityContext securityCtx) throws SecurityException {
-        System.out.println("In authorize");
+        //TODO - Here we can check permissions for given cache operation
     }
 
     public void onSessionExpired(UUID subjId) {
@@ -82,4 +96,5 @@ public class SecurityProcessor extends GridProcessorAdapter implements GridSecur
     public boolean enabled() {
         return true;
     }
+
 }
