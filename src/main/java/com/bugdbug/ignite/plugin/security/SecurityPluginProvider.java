@@ -19,7 +19,7 @@ public class SecurityPluginProvider implements PluginProvider<SecurityPluginConf
     private IgnitePlugin authenticationPlugin;
 
     public String name() {
-        return "Authentication Plugin";
+        return "Security Plugin";
     }
 
     public String version() {
@@ -27,7 +27,7 @@ public class SecurityPluginProvider implements PluginProvider<SecurityPluginConf
     }
 
     public String copyright() {
-        return null;
+        return "BugDbug ©2019";
     }
 
     public <T extends IgnitePlugin> T plugin() {
